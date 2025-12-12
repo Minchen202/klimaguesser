@@ -1518,8 +1518,6 @@ climateData = [
 
 lobbies_lock = threading.Lock()
 
-users_db = {}
-
 tokens_to_users = {}
 
 
@@ -1636,7 +1634,7 @@ def handle_save_solo_game(data):
     if socket_id not in active_solo_games:
         emit('save_solo_response', {'success': False, 'message': 'No active solo game found.'})
         return
-    if not username or username not in users_db:
+    if not username or username not in db_models.Users.query.filter_by(username=username).first():
         emit('save_solo_response', {'success': False, 'message': 'Invalid username.'})
         return
 
@@ -1651,7 +1649,7 @@ def handle_save_solo_game(data):
 @socketio.on('get_leaderboard')
 def handle_get_leaderboard():
     # Alle Einträge abfragen, absteigend nach score sortieren
-    leaderboard_data = db_models.leaderboard.query.order_by(db_models.leaderboard.score.desc()).all()
+    leaderboard_data = db_models.Leaderboard.query.order_by(db_models.Leaderboard.score.desc()).all()
 
     # Die Daten für den Client formatieren
     leaderboard = [{
@@ -1673,16 +1671,15 @@ def handle_register(data):
         emit('registration_response', {'success': False, 'message': 'Username and password are required.'})
         return
 
-    if username in users_db:
-        emit('registration_response', {'success': False, 'message': 'Username already exists.'})
-        return
+    if db_models.Users.query.filter_by(username=username).first():
+      emit('registration_response', {'success': False, 'message': 'Username already exists.'})
+      return
 
     hashed_password = generate_password_hash(password)
 
-    users_db[username] = {
-        'email': email,
-        'password': hashed_password,
-    }
+    new_user = db_models.Users(username=username, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
 
     print(f'New user registered: {username}')
     emit('registration_response', {'success': True, 'message': 'Registration successful!'})
@@ -1696,15 +1693,19 @@ def handle_login(data):
         emit('login_response', {'success': False, 'message': 'Username and password are required.'})
         return
 
-    user_data = users_db.get(username)
+    user_data_raw = db_models.Users.query.filter_by(username=username).first()
+
+    user_data = [str(user_data_raw).split(";")[0], str(user_data_raw).split(";")[1]]
+
     if not user_data:
         emit('login_response', {'success': False, 'message': 'Invalid username or password.'})
         return
 
-    if check_password_hash(user_data['password'], password):
+    if check_password_hash(user_data[1], password):
         token = str(uuid.uuid4())
         
-        users_db[username]['token'] = token
+        db_models.Users.query.filter_by(username=username).update({'token': token})
+        db.session.commit()
         tokens_to_users[token] = username
 
         print(f'User logged in: {username} with token: {token}')
@@ -1744,6 +1745,7 @@ def is_lobby_joinable():
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
+
 @app.route("/profile.png", methods=["GET"])
 def profile_image():
     return send_from_directory('pictures', 'profile.png')
@@ -1775,6 +1777,7 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print(f'Client {request.sid} disconnected')
+  
 
 @socketio.on('create_lobby')
 def handle_create_lobby():

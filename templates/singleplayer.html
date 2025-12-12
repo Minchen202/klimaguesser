@@ -319,6 +319,14 @@
             transform: translateX(-100%);
             transition: transform 0.4s ease-in;
         }
+        .btn-back {
+            position: fixed;
+            background: rgb(142, 3, 255);
+            color: white;
+            top: 40px;
+            left: 170px;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -381,6 +389,7 @@
           <div class="buttons">
               
               <button class="btn btn-secondary" onclick="newGame()">+</button>
+              <button class="btn btn-back" onclick="window.location = '/'">Go back</button>
               <button class="btn btn-primary" id="nextBtn" onclick="nextRound()" disabled>Next Round</button>
               <button class="btn btn-guess hidden" id="guessbutton">Guess</button>
               <div class="timeinfo"><span class="time"></span></div>
@@ -589,7 +598,6 @@
         });
         socket.on("save_solo_response", function(data) {
             if (data.success) {
-                document.
                 document.getElementById("alert-text").textContent = "Game saved";
                 document.getElementById("alert-subtitle").textContent = "Your score has been saved to the leaderboard.";
                 document.getElementById("alert").style.transform = "translateX(0)";
@@ -877,8 +885,8 @@
         function safeGame() {
             console.log("Saving game...");
             if (currentRound < urlParams.get("rounds")) return;
-            console.log("Game over, proceeding to save...");
             if (loggedIn) {
+                document.getElementsByClassName("btn-safe")[0].classList.add("hidden")
                 console.log("User is logged in, saving game...");
                 socket.emit('save_solo_game', {"token": getCookie("Token")});
             } else {

@@ -167,7 +167,7 @@
     </div>
   </div>
     <button id="profile-button" class="fixed top-3 left-3" style="box-shadow: none;">
-        <img src="profile.png" alt="Profile" class="w-10 h-10">
+        <img src="/profile.png" alt="Profile" class="w-10 h-10">
         <label for="profile-button" id="username"></label>
     </button>
     
@@ -401,7 +401,7 @@
             document.getElementById("error-icon").classList.add("hidden");
             console.log("Connected to server");
             setTimeout(function() {
-                document.getElementById("alert").style.transform = "translateX(-100%)";
+                document.getElementById("alert").style.transform = "translateX(-120%)";
             }, 3000);
         });
         socket.on('disconnect', function() {
