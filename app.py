@@ -1518,7 +1518,6 @@ climateData = [
 
 lobbies_lock = threading.Lock()
 
-tokens_to_users = {}
 
 
 def generate_unique_lobby_code(length=6):
@@ -1630,15 +1629,16 @@ def handle_delete_solo_game():
 def handle_save_solo_game(data):
     socket_id = request.sid
     token = data.get('token')
-    username = tokens_to_users.get(token)
+    username = db_models.Users.query.filter_by(token=token).first()
+    print(db_models.Users.query.filter_by(username=username).first())
     if socket_id not in active_solo_games:
         emit('save_solo_response', {'success': False, 'message': 'No active solo game found.'})
         return
-    if not username or username not in db_models.Users.query.filter_by(username=username).first():
+    if not username or username not in str(db_models.Users.query.filter_by(username=username).first()).split(";")[0]:
         emit('save_solo_response', {'success': False, 'message': 'Invalid username.'})
         return
 
-    game_data = db_models.leaderboard(username=username, score=active_solo_games[socket_id]['score'],timestamp=datetime.now())
+    game_data = db_models.Leaderboard(username=username, score=active_solo_games[socket_id]['score'], timestamp=datetime.now())
     db.session.add(game_data)
     db.session.commit()
     print(f'Solo game saved for user: {username} with score: {active_solo_games[socket_id]["score"]}')
@@ -1706,7 +1706,6 @@ def handle_login(data):
         
         db_models.Users.query.filter_by(username=username).update({'token': token})
         db.session.commit()
-        tokens_to_users[token] = username
 
         print(f'User logged in: {username} with token: {token}')
         emit('login_response', {'success': True, 'message': 'Login successful!', 'token': token, 'username': username})
@@ -1718,7 +1717,7 @@ def handle_authenticate(data):
     
     token = data.get('token')
     
-    username = tokens_to_users.get(token)
+    username = str(db_models.Users.query.filter_by(token=token).first()).split(";")[0] 
 
     if username:
         emit('auth_response', {
