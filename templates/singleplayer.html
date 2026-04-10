@@ -121,7 +121,7 @@
             color: white;
             z-index: 1;
         }
-        .btn-safe{
+        .btn-save{
             background: linear-gradient(45deg, #2196F3, #1976D2);
             color: white;
             z-index: 1;
@@ -412,7 +412,7 @@
             <div class="final-score" id="finalScore">0</div>
             <p>Well played! Ready for another round?</p>
             <button class="btn btn-again" onclick="newGame()">Play Again</button>
-            <button class="btn btn-safe" onclick="safeGame()">Safe in Leaderboard</button>
+            <button class="btn btn-save" onclick="saveGame()">save in Leaderboard</button>
         </div>
     </div>
 
@@ -886,11 +886,11 @@
                 startRound();
             }
         }
-        function safeGame() {
+        function saveGame() {
             console.log("Saving game...");
             if (currentRound < urlParams.get("rounds")) return;
             if (loggedIn) {
-                document.getElementsByClassName("btn-safe")[0].classList.add("hidden")
+                document.getElementsByClassName("btn-save")[0].classList.add("hidden")
                 console.log("User is logged in, saving game...");
                 socket.emit('save_solo_game', {"token": getCookie("Token")});
             } else {
