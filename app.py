@@ -32,6 +32,17 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+try:
+    old_log = open('app.log', 'r').read()
+    date = old_log.split('\n')[0].removeprefix('#')
+    safe_date = date.replace(':', '-')
+    with open(os.path.join("logs", safe_date + ".log"), 'w') as f:
+        f.write(old_log)
+    open('app.log', 'w').write("#" + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + "\n")
+except Exception as e:
+    open('app.log', 'w').write("#" + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + "\n")
+    logger.error(f"Error archiving log file: {e}")
+
 logger.info("Starting application...")
 
 app = flask.Flask(__name__)
@@ -56,7 +67,8 @@ socketio = SocketIO(
         "https://klimaguessr.cns-studios.com",
         "https://klima-test.cns-studios.com",
         "http://klima-test.cns-studios.com",
-        "http://localhost:" + os.getenv("PORT", "8081")
+        "http://localhost:" + os.getenv("PORT", "8081"),
+        "http://127.0.0.1:" + os.getenv("PORT", "8081")
     ]
 )
 
@@ -819,16 +831,4 @@ def handle_get_lobby_info(data):
         })
 
 if __name__ == '__main__':
-    try:
-        old_log = open('app.log', 'r').read()
-        date = old_log.split('\n')[0].removeprefix('#')
-        safe_date = date.replace(':', '-')
-        with open(os.path.join("logs", open('app.log', 'r').read().split('\n')[0].split("[")[0].strip() + ".log"), 'w') as f:
-            f.write(old_log)
-        open('app.log', 'w').write("")
-    except Exception as e:
-        open('app.log', 'w').write("")
-        logger.error(f"Error archiving log file: {e}")
-
-
     socketio.run(app,debug=os.getenv("DEBUG", False), port=int(os.getenv("PORT", 8081)))
