@@ -15,6 +15,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            --color-btn-angle: 0deg;
         }
 
         body {
@@ -22,46 +23,6 @@
             background-color: #1a202c;
             min-height: 100vh;
             color: white;
-        }
-
-        #headbar {
-          position: fixed;
-          top: 10px;
-          left: 10px;
-          width: 98%;
-          height: 80px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 10px;
-          background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
-          border-width: 1px;
-          border-color: #1754ce;
-        }
-
-        .header {
-            position: fixed;
-            top: 20px;
-            left: 25%;
-            text-align: center;
-            margin-bottom: 20px;
-            width: 50%;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .score-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 1.1em;
         }
 
         .climate-chart {
@@ -73,18 +34,6 @@
             align-items: center;    
         }
         
-        #roundDisplay {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1;
-        }
-        #totalScoreDisplay {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1;
-        }
         .chart-title {
             text-align: center;
             color: #333;
@@ -105,33 +54,63 @@
         }
 
         .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            position: relative;
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.75), rgba(36, 18, 58, 0.72));
+            padding: 12px 18px;
+            border-radius: 14px;
+            text-align: center;
+            font-size: 1.08em;
+            color: #f5f7ff;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 2;
+            background:
+                linear-gradient(#6477e0 0 0) top right / 0 2px no-repeat,
+                linear-gradient(#6477e0 0 0) bottom left / 0 2px no-repeat,
+                linear-gradient(#6477e0 0 0) top right / 2px 0 no-repeat,
+                linear-gradient(#6477e0 0 0) bottom left / 2px 0 no-repeat;
+            transition: background-size 0.38s cubic-bezier(0.35, 0.1, 0.25, 1);
+        }
+
+        .btn:hover::before {
+            background-size: 100% 2px, 100% 2px, 2px 100%, 2px 100%;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset, 0 14px 34px rgba(0, 0, 0, 0.4), 0 0 18px rgba(68, 216, 164, 0.2);
+        }
+        
+        .btn-back {
+            position: fixed;
+            top: 10px;
+            left: 1%;
+            z-index: 3;
         }
         .btn-again{
-            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border: #2196F3 solid 1px;
             color: white;
-            z-index: 1;
+            z-index: 3;
         }
         .btn-save{
-            background: linear-gradient(45deg, #2196F3, #1976D2);
             color: white;
-            z-index: 1;
+            border: #2196F3 solid 1px;
+            z-index: 3;
             margin-top: 10px;
         }
         .btn-guess {
             position: absolute;
-            background: linear-gradient(45deg, #FFC107, #FF9800);
             color: white;
-            right: 10px;
+            left: 10px;
             bottom: 20px;
             z-index: 1;
             width: 120px;
@@ -142,7 +121,6 @@
 
         .btn-primary {
             position: absolute;
-            background: linear-gradient(45deg, #4CAF50, #45a049);
             color: white;
             left: -550px;
             bottom: 20px;
@@ -151,16 +129,11 @@
 
         .btn-secondary {
             position: fixed;
-            background: linear-gradient(45deg, #2196F3, #1976D2);
-            color: white;
-            top: 40px;
-            left: 10px;
-            z-index: 1;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            top: 10px;
+            right: 1%;
+            text-align: center;
+            font-weight: bold;
+            z-index: 3;
         }
 
         .btn:disabled {
@@ -171,10 +144,10 @@
 
         #map {
             position: fixed;
-            top: 100px;
+            top: 0;
             left: 0;
             width: 100%;
-            height: calc(100% - 100px);
+            height: 100%;
         }
 
         .result-popup {
@@ -202,45 +175,33 @@
 
         .game-over {
             position: fixed;
-            top: 100px;
+            top: 0px;
             left: 0;
             width: 100%;
-            height: calc(100% - 100px);
+            height: 100%;
             background: rgba(0, 0, 0, 0.8);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 2;
         }
 
         .game-over-content {
-            background: white;
-            color: #333;
-            padding: 40px;
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.75), rgba(36, 18, 58, 0.72));
+            color: #f5f7ff;
+            border: 1px solid #ff8800;
+            padding: 35px;
+            ;
             border-radius: 15px;
             text-align: center;
             max-width: 400px;
         }
 
-        .game-over h2 {
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
-
         .final-score {
             font-size: 2em;
             font-weight: bold;
-            color: #2196F3;
+            color: #ff8800;
             margin: 20px 0;
-        }
-
-        .instruction {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.1em;
         }
         #climateChart:before {
             position: fixed;
@@ -288,9 +249,8 @@
             #climateChart:before {
                 display: none;
             }
-            #header {
-              position: fixed;
-              height: 5%;
+            .header {
+                display: none;
             }
         }
         .timeinfo{
@@ -319,13 +279,66 @@
             transform: translateX(-100%);
             transition: transform 0.4s ease-in;
         }
-        .btn-back {
+        #highScoreDisplay {
             position: fixed;
-            background: rgb(142, 3, 255);
-            color: white;
-            top: 40px;
-            left: 70px;
-            z-index: 1;
+            top: 10px;
+            left: 6%;
+            z-index: 3;
+        }
+        #ScoreDisplay {
+            position: fixed;
+            top: 10px;
+            right: 6%;
+            z-index: 3;
+        }
+        .info {
+            position: relative;
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.75), rgba(36, 18, 58, 0.72));
+            padding: 12px 18px;
+            border-radius: 14px;
+            text-align: center;
+            font-size: 1.08em;
+            color: #f5f7ff;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .hexagon-container {
+            position: absolute;
+            right: calc(50% - 40px);
+            top: 5px;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 60px;
+        }
+
+        .hexagon-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+
+        .border {
+            stroke: #4CAF50;
+            stroke-width: 8;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 0;
+            transition: stroke 0.5s ease;
+        }
+
+        .border.warning {
+            stroke: #f44336;
+        }
+
+        .hex-text {
+            font-family: sans-serif;
+            font-size: 1.25rem;
+            color: #fff;
+            z-index: 5;
         }
     </style>
 </head>
@@ -376,24 +389,41 @@
   </div>
     <div>
         <canvas id="climateChart" width="400" height="300"></canvas>
-        <div id="headbar">
-            <div class="header hidden">
-                <h1>Klima Guessr</h1>
-            </div>
 
-            <div class="score-info">
-                <div id="roundDisplay">Round: <span id="currentRound">1</span><span id="totalrounds"></span> <span class="hidden" id="usernameDisplay"> User:</span> <span id="username"></span></div></div>
-                <div id="totalScoreDisplay">Score: <span id="totalScore">0</span>  Highscore: <span id="highscore">0</span></div>
+        <div class="header">
+            <div id="highScoreDisplay" class="info">
+                <div>Highscore: <span id="highscore">1</span></div>
+            </div>
+            <div id="ScoreDisplay" class="info">
+                <div>Total Score: <span id="totalScore">0</span></div>
             </div>
         </div>
-          <div class="buttons">
-              
-              <button class="btn btn-secondary" onclick="newGame()">+</button>
-              <button class="btn btn-back" onclick="window.location = '/'">↩</button>
-              <button class="btn btn-primary" id="nextBtn" onclick="nextRound()" disabled>Next Round</button>
-              <button class="btn btn-guess hidden" id="guessbutton">Guess</button>
-              <div class="timeinfo"><span class="time"></span></div>
-          </div>
+
+            <div class="buttons">
+                <button class="btn btn-secondary" onclick="newGame()">+</button>
+                <button class="btn btn-back" onclick="window.location = '/'">↩</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextRound()" disabled>Next Round</button>
+                <button class="btn btn-guess hidden" id="guessbutton">Guess</button>
+                <div class="hexagon-container">
+                <svg class="hexagon-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:rgba(18, 24, 40, 0.75); stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:rgba(36, 18, 58, 0.72); stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+
+                    <polygon 
+                        class="border" 
+                        id="hexBorder" 
+                        points="150,10 280,80 280,220 150,290 20,220 20,80" 
+                        fill="url(#hexGradient)" 
+                    />
+                </svg>
+                <div class="hex-text" id="timer">60</div>
+                <div class="hex-text hidden" id="rounds"></div>
+            </div>
+        </div>
         
 
         <div>
@@ -408,11 +438,10 @@
 
     <div class="game-over" id="gameOver">
         <div class="game-over-content">
-            <h2>Game Complete!</h2>
+            <p>Well played! Your final score is:</p>
             <div class="final-score" id="finalScore">0</div>
-            <p>Well played! Ready for another round?</p>
             <button class="btn btn-again" onclick="newGame()">Play Again</button>
-            <button class="btn btn-save" onclick="saveGame()">save in Leaderboard</button>
+            <button class="btn btn-save" onclick="saveGame()">Save in Leaderboard</button>
         </div>
     </div>
 
@@ -420,6 +449,8 @@
     <script>
         const socket = io();
         const urlParams = new URLSearchParams(window.location.search);
+        
+        const totalRounds = urlParams.get('rounds') || 5;
 
         let currentRound = 1;
         let totalScore = 0;
@@ -431,6 +462,10 @@
         let time = 0;
         let loggedIn = false;
 
+        const border = document.getElementById('hexBorder');
+        const totalLength = border.getTotalLength();
+        border.style.strokeDasharray = totalLength;
+
         socket.on('connect', function() {
             document.getElementById("alert-text").textContent = "Connection established";
             document.getElementById("alert-subtitle").textContent = "Successfully connected to server.";
@@ -439,7 +474,7 @@
             document.getElementById("error-icon").classList.add("hidden");
             console.log("Connected to server");
             setTimeout(function() {
-                document.getElementById("alert").style.transform = "translateX(-100%)";
+                document.getElementById("alert").style.transform = "translateX(-120%)";
             }, 3000);
         });
         socket.on('disconnect', function() {
@@ -450,7 +485,7 @@
             document.getElementById("error-icon").classList.remove("hidden");
             console.log("Disconnected from server");
             setTimeout(function() {
-                document.getElementById("alert").style.transform = "translateX(-100%)";
+                document.getElementById("alert").style.transform = "translateX(-120%)";
             }, 3000);
         });
 
@@ -462,7 +497,7 @@
                 document.getElementById("success-icon").classList.remove("hidden");
                 document.getElementById("error-icon").classList.add("hidden");
                 setTimeout(function() {
-                    document.getElementById("alert").style.transform = "translateX(-100%)";
+                    document.getElementById("alert").style.transform = "translateX(-120%)";
                 }, 3000);
                 document.getElementById('username').textContent = data.username;
                 loggedIn = true;
@@ -473,7 +508,7 @@
                 document.getElementById("success-icon").classList.add("hidden");
                 document.getElementById("error-icon").classList.remove("hidden");
                 setTimeout(function() {
-                    document.getElementById("alert").style.transform = "translateX(-100%)";
+                    document.getElementById("alert").style.transform = "translateX(-120%)";
                 }, 3000);
                 document.cookie = "Token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             }
@@ -483,7 +518,7 @@
             if (data.success) {
                 currentRound = 1;
                 totalScore = 0;
-                document.getElementById('currentRound').textContent = currentRound;
+                document.getElementById('rounds').textContent = currentRound + "/" + totalRounds;
                 document.getElementById('totalScore').textContent = totalScore;
                 drawClimateChart(data.climate);
             } else {
@@ -493,7 +528,7 @@
                 document.getElementById("success-icon").classList.add("hidden");
                 document.getElementById("error-icon").classList.remove("hidden");
                 setTimeout(function() {
-                    document.getElementById("alert").style.transform = "translateX(-100%)";
+                    document.getElementById("alert").style.transform = "translateX(-120%)";
                 }, 3000);
             }
         });
@@ -572,7 +607,7 @@
 
                 console.log(data.message);
                 drawClimateChart(data.climate);
-                document.getElementById('currentRound').textContent = data.current_round;
+                document.getElementById('rounds').textContent = data.current_round + "/" + totalRounds;
                 document.getElementById('totalScore').textContent = data.total_score;
                 starttimer();
             } else {
@@ -603,7 +638,7 @@
                 document.getElementById("success-icon").classList.remove("hidden");
                 document.getElementById("error-icon").classList.add("hidden");
                 setTimeout(function() {
-                    document.getElementById("alert").style.transform = "translateX(-100%)";
+                    document.getElementById("alert").style.transform = "translateX(-120%)";
                     window.location.href = "/?page=leaderboard";
                 }, 3000);
             } else {
@@ -613,7 +648,7 @@
                 document.getElementById("success-icon").classList.add("hidden");
                 document.getElementById("error-icon").classList.remove("hidden");
                 setTimeout(function() {
-                    document.getElementById("alert").style.transform = "translateX(-100%)";
+                    document.getElementById("alert").style.transform = "translateX(-120%)";
                 }, 3000);
             }
         });
@@ -624,20 +659,20 @@
                     'token': getCookie("Token")
                 });
             }
-            if (urlParams.get("rounds") === null || urlParams.get("rounds") < 1 || urlParams.get("time") === null) {
+            if (urlParams.get("rounds") === null || urlParams.get("rounds") < 1 || urlParams.get("time") === null || urlParams.get("time") < 0 || isNaN(urlParams.get("time"))) {
                 window.location.href = "/";
             }
-            document.getElementById("totalrounds").textContent = "/"+urlParams.get("rounds");
+            if (urlParams.get("time") == 0) {
+                document.getElementById("timer").classList.add("hidden");
+                document.getElementById("rounds").classList.remove("hidden");
+            }
+            document.getElementById("rounds").textContent = "1/"+urlParams.get("rounds");
             document.getElementById("highscore").textContent = getCookie("Highscore");
             if (getCookie("Highscore") === null) {
                 document.cookie = "Highscore=0; path=/";
                 document.getElementById("highscore").textContent = "0";
             }
             if (window.innerWidth >= 768) {
-                document.getElementsByClassName("btn-secondary")[0].textContent = "New Game";
-                document.getElementsByClassName("btn-back")[0].textContent = "Go Back";
-                document.getElementsByClassName("btn-back")[0].style.left = "170px";
-                document.getElementsByClassName("header")[0].classList.remove("hidden");
                 document.getElementById("climateChart").addEventListener("mouseover", function() {
                     socket.emit('resize_chart', {big: true});
                 });
@@ -682,14 +717,21 @@
         function starttimer() {
           time = parseInt(urlParams.get("time"));
           if (time <= 0) {
-            document.getElementsByClassName("timeinfo")[0].style.display = "none";
+            document.getElementById("timer").style.display = "none";
           } else {  
             var timer = setInterval(()=> {
             if (time <= 0) {
               showResult();
               clearInterval(timer);
             } else if (roundComplete === true) clearInterval(timer);
-            document.getElementsByClassName("time")[0].textContent = time; 
+            if (time <= 10) {
+                border.classList.add('warning');
+            }
+
+            const offset = totalLength - (time / parseInt(urlParams.get("time"))) * totalLength;
+            border.style.strokeDashoffset = offset;
+
+            document.getElementById("timer").textContent = time; 
             time--;
             }, 1000);
           }
@@ -901,7 +943,7 @@
                 document.getElementById("success-icon").classList.add("hidden");
                 document.getElementById("error-icon").classList.remove("hidden");
                 setTimeout(function() {
-                    document.getElementById("alert").style.transform = "translateX(-100%)";
+                    document.getElementById("alert").style.transform = "translateX(-120%)";
                 }, 3000);
             }
         }

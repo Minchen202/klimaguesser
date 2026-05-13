@@ -352,6 +352,10 @@ def settings_image():
 def climamap():
     return render_template("climamap.html")
 
+@app.route("/test", methods=["GET"])
+def test():
+    return render_template("test.html")
+
 @app.route("/logs", methods=["GET"])
 def logs():
     if request.get_json() is None or request.get_json().get("secret_key") != os.getenv("log_secret"):
