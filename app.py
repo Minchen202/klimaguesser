@@ -134,13 +134,27 @@ def handle_resize_chart(data):
 @socketio.on('submit_solo_guess')
 def handle_submit_solo_guess(data):
     socket_id = request.sid
-    guess_lat = data.get('guessLat')
-    guess_lng = data.get('guessLng')
-
     game_data = active_solo_games[socket_id]
+
     climate = game_data['climate']
     actual_lat = climate['lat']
     actual_lng = climate['lng']
+
+    if not data or 'guessLat' not in data or 'guessLng' not in data:
+        emit('solo_guess_response', {
+            'success': True,
+            'message': f'Round {game_data["current_round"]} started!',
+            'current_round': game_data['current_round'],
+            "name": climate['name'],
+            'score': 0,
+            'actual_location': {'lat': actual_lat, 'lng': actual_lng},
+            "total_points": game_data['score'],
+            'points_earned': 0
+        })
+        return
+    
+    guess_lat = data.get('guessLat')
+    guess_lng = data.get('guessLng')
 
     lat_distance = abs((guess_lat - actual_lat)) * 111  # approx km per degree latitude
     lon_distance = abs((guess_lng - actual_lng)) * 111  # approx km per degree longitude

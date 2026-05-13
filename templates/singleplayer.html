@@ -715,24 +715,25 @@
             
 
         function starttimer() {
+          border.classList.remove('warning');
           time = parseInt(urlParams.get("time"));
           if (time <= 0) {
             document.getElementById("timer").style.display = "none";
           } else {  
             var timer = setInterval(()=> {
-            if (time <= 0) {
-              showResult();
-              clearInterval(timer);
-            } else if (roundComplete === true) clearInterval(timer);
-            if (time <= 10) {
-                border.classList.add('warning');
-            }
+                if (time <= 0) {
+                showResult();
+                clearInterval(timer);
+                } else if (roundComplete === true) clearInterval(timer);
+                if (time <= 10) {
+                    border.classList.add('warning');
+                }
 
-            const offset = totalLength - (time / parseInt(urlParams.get("time"))) * totalLength;
-            border.style.strokeDashoffset = offset;
+                const offset = totalLength - (time / parseInt(urlParams.get("time"))) * totalLength;
+                border.style.strokeDashoffset = offset;
 
-            document.getElementById("timer").textContent = time; 
-            time--;
+                document.getElementById("timer").textContent = time; 
+                time--;
             }, 1000);
           }
         }
@@ -908,6 +909,10 @@
         }
 
         function showResult() {  
+            if (!userGuess) {
+                socket.emit('submit_solo_guess', {});
+                return;
+            }
             socket.emit('submit_solo_guess', {
                 'guessLat': userGuess.lat,
                 'guessLng': userGuess.lng
