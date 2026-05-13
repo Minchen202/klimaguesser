@@ -262,6 +262,7 @@
         });
 
         socket.on("new_round_started", function(info) {
+            console.log(info);
             if (info.success) {
                 const data = info;
                 console.log("New round started");
@@ -307,7 +308,7 @@
         });
 
         function initGame() {
-            socket.emit("register", {
+            socket.emit("register_player", {
                 lobby_code: getCookie("Lobbycode"),
                 nickname: getCookie("Nickname")
             })

@@ -225,8 +225,6 @@ def handle_save_solo_game(data):
     logger.info(f'Solo game saved for user: {username} with score: {active_solo_games[socket_id]["score"]}')
     emit('save_solo_response', {'success': True, 'message': 'Solo game saved successfully!'})
 
-
-
 @socketio.on('get_leaderboard')
 def handle_get_leaderboard():
     # Alle Einträge abfragen, absteigend nach score sortieren
@@ -463,6 +461,7 @@ def handle_create_lobby():
 def reg(data):
     nickname = data.get('nickname', None)
     lobby_code = data.get('lobby_code', None)
+    logger.info(f"Registering player '{nickname}' in lobby '{lobby_code}'.")
     if not lobby_code or not nickname:
         emit('register_result', {
             'error_code': 'missing_fields',
@@ -480,30 +479,26 @@ def reg(data):
         logger.warning("Nickname is too long")
         return
 
-    with lobbies_lock:
-        if lobby_code not in active_lobbies:
-            emit('register_result', {
-                'success': False,
-                'error_code': 'lobby_not_found',
-                'message': f"Lobby '{lobby_code}' not found."
-            })
-            logger.warning(f"Lobby '{lobby_code}' not found.")
-            return
-        if not nickname in active_lobbies[lobby_code]['players'] and not nickname == "Host":
-            emit('register_result', {
-                'success': False,
-                'message': "Nickname doesn't exist in the lobby.",
-                'error_code': 'nickname_not_found'
-            })
-            logger.warning(f"Nickname '{nickname}' not found in lobby '{lobby_code}'.")
-            return
+    if lobby_code not in active_lobbies:
+        emit('register_result', {
+            'error_code': 'lobby_not_found',
+            'success': False,
+            'message': "Lobby not found."
+        })
+        logger.warning("Lobby not found")
+        return
         
+    
+    if nickname in active_lobbies[lobby_code]['players']:
+        active_lobbies[lobby_code]['players'][nickname]['sid'] = request.sid
+    
     join_room(lobby_code)
     logger.info(f"Player '{nickname}' registered in lobby '{lobby_code}'.")
     emit('register_result', {
         'success': True,
         'message': "Successfully registered."
     })
+    broadcast_lobby_update(lobby_code)
 
 @socketio.on('join_lobby')
 def handle_join_lobby(data):
