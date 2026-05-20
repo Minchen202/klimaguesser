@@ -659,7 +659,7 @@
                     'token': getCookie("Token")
                 });
             }
-            if (urlParams.get("rounds") === null || urlParams.get("rounds") < 1 || urlParams.get("time") === null || urlParams.get("time") < 0 || isNaN(urlParams.get("time"))) {
+            if (urlParams.get("rounds") === null || urlParams.get("rounds") < 1|| urlParams.get("rounds") >=16 || urlParams.get("time") >= 181 || urlParams.get("time") === null || urlParams.get("time") < 0 || isNaN(urlParams.get("time"))) {
                 window.location.href = "/";
             }
             if (urlParams.get("time") == 0) {
