@@ -1,7 +1,0 @@
-Flask
-Flask-SocketIO
-Flask-SQLAlchemy
-gunicorn
-eventlet
-python-dotenv
-psutil

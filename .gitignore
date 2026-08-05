@@ -1,6 +1,4 @@
-instance    
-templates/test.html
-__pycache__
+/backend/klimaguessr.db
 .env
-/logs/*
-app.log
+/backend/logs/*
+/backend/app.log
